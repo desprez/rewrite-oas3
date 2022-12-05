@@ -30,8 +30,11 @@ java {
 }
 
 // Set as appropriate for your organization
-group = "com.yourorg"
-description = "Rewrite recipes."
+group = "org.openrewrite.recipe"
+description = "Replace Swagger2 annotations with Open Api 3 annotations. Automatically."
+version = "0.0.1"
+
+//java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenLocal()
@@ -49,7 +52,7 @@ configurations.all {
 }
 
 //The bom version can also be set to a specific version or latest.release.
-val rewriteBomVersion = "latest.integration"
+val rewriteBomVersion = "latest.release"
 
 dependencies {
     compileOnly("org.projectlombok:lombok:latest.release")
@@ -58,8 +61,15 @@ dependencies {
     implementation(platform("org.openrewrite.recipe:rewrite-recipe-bom:${rewriteBomVersion}"))
 
     implementation("org.openrewrite:rewrite-java")
+    runtimeOnly("org.openrewrite:rewrite-java-8")
+    runtimeOnly("org.openrewrite:rewrite-java-11")
     runtimeOnly("org.openrewrite:rewrite-java-17")
-
+    implementation("org.openrewrite:rewrite-maven")
+    
+    testImplementation("io.swagger.core.v3:swagger-core:latest.release")
+	testImplementation("io.swagger:swagger-annotations:1.5.10")
+	testImplementation("io.springfox:springfox-core:2.9.2")
+   
     testImplementation("org.junit.jupiter:junit-jupiter-api:latest.release")
     testImplementation("org.junit.jupiter:junit-jupiter-params:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")

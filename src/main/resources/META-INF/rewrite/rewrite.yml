@@ -1,0 +1,39 @@
+#
+---
+########################################################################################################################
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.MigrateSpringfoxToSpringDoc
+displayName: Replace Swagger2 annotations with Open Api 3 annotations. Automatically.
+description: >
+  Migrate applications built with io.Springfox to the latest org.SpringDoc release. This recipe will modify an
+  application's build files, make changes to deprecated/preferred APIs, and migrate configuration settings that have
+  changes between versions.
+tags:
+  - Swagger2
+  - Open-Api3
+recipeList:
+  # Migrate from io.springfox to springdoc-openapi-ui
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: io.springfox
+      oldArtifactId: springfox-swagger2
+      newGroupId: org.springdoc
+      newArtifactId: springdoc-openapi-ui
+      newVersion: 1.6.X
+      overrideManagedVersion: false
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: io.springfox
+      artifactId: springfox-swagger-ui
+  - org.openrewrite.java.RemoveAnnotation:
+      annotationPattern: '@io.swagger.EnableSwagger2'
+      
+  # Use recommended replacements for deprecated APIs
+  - org.openrewrite.java.oas3.ReplaceApiModelPropertyWithOAS3SchemaAnnotation
+  - org.openrewrite.java.oas3.ReplaceApiModelWithOAS3SchemaAnnotation
+  - org.openrewrite.java.oas3.ReplaceAuthorizationWithOAS3SecurityRequirementAnnotation
+  - org.openrewrite.java.oas3.ReplaceApiOperationWithOAS3OperationAnnotation
+  - org.openrewrite.java.oas3.ReplaceApiParamWithOAS3ParameterAnnotation
+  - org.openrewrite.java.oas3.ReplaceApiResponseWithOAS3ApiResponseAnnotation
+  - org.openrewrite.java.oas3.ReplaceApiResponsesWithOAS3ApiResponsesAnnotation
+  - org.openrewrite.java.oas3.ReplaceApiWithOAS3TagAnnotation
+
+  # Update properties
